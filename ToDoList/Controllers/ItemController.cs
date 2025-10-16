@@ -22,9 +22,9 @@ namespace ToDoList.Controllers
 
             ViewBag.SelectedDate = selectedDate;
 
-            var tomorrow = DateTime.Today.AddDays(1);
+            var nextDay = selectedDate.AddDays(1);
             var futureTasks = await _context.Items
-                .Where(i => i.DueAt.Date >= tomorrow)
+                .Where(i => i.DueAt.Date >= nextDay)
                 .OrderBy(i => i.DueAt)
                 .ToListAsync();
 
@@ -35,6 +35,15 @@ namespace ToDoList.Controllers
             ViewBag.NextTaskDue = nextTask?.DueAt.ToString("dd MMM yyyy") ?? "-";
 
             return View(items);
+        }
+        public async Task<IActionResult> ChangeStatus(int id)
+        {
+            var item = _context.Items.FirstOrDefault(x => x.Id == id);
+            item.Finished = !item.Finished;
+            _context.Update(item);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", new { date = item.DueAt.Date.ToString("yyyy-MM-dd") });
+            //return RedirectToAction("Index");
         }
         public IActionResult Create(DateTime? date) { 
             var item = new Item();
@@ -51,7 +60,8 @@ namespace ToDoList.Controllers
             {
                 _context.Items.Add(item);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { date = item.DueAt.Date.ToString("yyyy-MM-dd") });
+                //return RedirectToAction("Index");
             }
             return View(item);
         }
@@ -67,7 +77,8 @@ namespace ToDoList.Controllers
             {
                 _context.Update(item);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { date = item.DueAt.Date.ToString("yyyy-MM-dd") });
+                //return RedirectToAction("Index");
             }
             return View(item);
         }
@@ -85,7 +96,8 @@ namespace ToDoList.Controllers
                 _context.Items.Remove(item);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { date = item.DueAt.Date.ToString("yyyy-MM-dd") });
+            //return RedirectToAction("Index");
         }
     }
 }
