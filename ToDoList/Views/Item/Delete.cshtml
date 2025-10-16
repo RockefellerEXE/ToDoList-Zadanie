@@ -1,0 +1,10 @@
+﻿@model ToDoList.Models.Item
+@{
+}
+<h3> Czy na pewno chcesz usunąć pozycję?</h3>
+<p>@Model.Name</p>
+<p>@Model.Description</p>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id"/>
+    <input type="submit" class="btn btn-danger" value="Usuń"/>
+</form>
