@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+table.table-bordered {
+    border: 2px solid black;
+}
+
+table.table-bordered th,
+table.table-bordered td {
+        border: 2px solid black;
+        padding: 12px;
+}

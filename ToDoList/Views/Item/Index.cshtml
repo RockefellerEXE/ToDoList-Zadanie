@@ -1,13 +1,21 @@
 ﻿@model List<ToDoList.Models.Item>
 @{
+    ViewData["Title"] = "Strona główna";
 }
+<form method="get" asp-action="Index" class="mb-3 d-flex align-items-center gap-2">
+    <label for="date">Wybierz dzień:</label>
+    <input type="date" name="date" class="form-control w-auto" value="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" />
+    <button type="submit" class="btn btn-primary">Pokaż</button>
+    <a asp-action="Index" class="btn btn-secondary">Dzisiaj</a>
+</form>
 @if (Model.Count != 0)
 {
-    <table>
+    <table class="table-bordered table-striped">
         <thead>
             <tr>
                 <th>Nazwa</th>
                 <th>Opis</th>
+                <th>Czas do</th>
                 <th>Status</th>
                 <th>Akcje</th>
             </tr>
@@ -16,21 +24,22 @@
             @foreach (var item in Model)
             {
                 <tr>
-                <td>@item.Name</td>
-                <td>@item.Description</td>
-                <td>
-                    @if (item.Finished)
-                    {
-                        <span>Ukończone</span>
-                    }
-                    else
-                    {
-                        <span>W trakcie</span>
-                    }
-                    
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.DueAt.ToString("dd MMM yyyy HH:mm")</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edytuj</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Usuń</a>
+                        @if (item.Finished)
+                        {
+                            <span class="badge bg-success">Ukończone</span>
+                        }
+                        else
+                        {
+                             <span class="badge bg-warning text-dark">W trakcie</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Usuń</a>
                     </td>
                 </tr>
             }
@@ -39,9 +48,9 @@
 }
 else
 {
-    <h3>Nie masz jeszcze żadnych zadań. Dodaj nowe zadanie</h3>
+    <h3>Nie masz jeszcze żadnych zadań tego dnia. Dodaj nowe zadanie :) </h3>
 }
 
-<a asp-action="Create" class="btn btn-success">Dodaj pozycję</a>
+<a asp-action="Create" asp-route-date="@ViewBag.SelectedDate.ToString("yyyy-MM-dd HH:mm")" class="btn btn-success">Dodaj pozycję</a>
 
 

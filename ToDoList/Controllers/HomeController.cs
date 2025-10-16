@@ -15,7 +15,7 @@ namespace ToDoList.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Item");
         }
 
         public IActionResult Privacy()

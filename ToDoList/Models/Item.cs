@@ -7,6 +7,9 @@
         public string Description { get; set; }
         public bool Finished { get; set; }
 
+        public DateTime DueAt { get; set; }
+
+
 
     }
 }

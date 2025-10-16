@@ -1,10 +1,26 @@
 ﻿@model ToDoList.Models.Item
 @{
+	ViewData["Title"] = "Usuń pozycję";
 }
 <h3> Czy na pewno chcesz usunąć pozycję?</h3>
-<p>@Model.Name</p>
-<p>@Model.Description</p>
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id"/>
+	<div class="form-group">
+		<label for="Name">Nazwa zadania</label>
+		<input type="text" class="form-control" asp-for="Name" disabled />
+	</div>
+	<div class="form-group">
+		<label for="Description">Nazwa zadania</label>
+		<input type="text" class="form-control" asp-for="Description" disabled />
+	</div>
+	<div class="form-group">
+		<label for="DueAt">Data ukończenia</label>
+		<input type="datetime-local" class="form-control" step="60" asp-for="DueAt" disabled/>
+	</div>
+	<div class="form-group">
+		<label for="Finished">Ukończone?</label>
+		<input type="checkbox" class="form-check-input" asp-for="Finished" disabled/>
+	</div>
+    <a asp-action="Index" asp-route-date="@Model.DueAt.ToString("yyyy-MM-dd")" class="btn btn-secondary">Powrót</a>
     <input type="submit" class="btn btn-danger" value="Usuń"/>
 </form>

@@ -12,16 +12,28 @@ namespace ToDoList.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index( DateTime? date)
         {
-            var item = await _context.Items.ToListAsync();
+            var selectedDate = date?.Date ?? DateTime.Today;
+            var item = await _context.Items
+                .Where(i=>i.DueAt.Date == selectedDate)
+                .OrderBy(i=>i.DueAt)
+                .ToListAsync();
+
+            ViewBag.SelectedDate = selectedDate;
+
             return View(item);
         }
-        public IActionResult Create() { 
-            return View();
+        public IActionResult Create(DateTime? date) { 
+            var item = new Item();
+            if (date.HasValue)
+            {
+                item.DueAt = date.Value;
+            }
+            return View(item);
         }
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Id, Name, Description, Finished")] Item item)
+        public async Task<IActionResult> Create([Bind("Id, Name, Description, Finished, DueAt")] Item item)
         {
             if (ModelState.IsValid)
             {
@@ -37,7 +49,7 @@ namespace ToDoList.Controllers
             return View(item);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, Description, Finished")] Item item)
+        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, Description, Finished, DueAt")] Item item)
         {
             if (ModelState.IsValid)
             {
