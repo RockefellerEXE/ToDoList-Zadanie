@@ -170,3 +170,7 @@ table.table-bordered {
 main {
     margin-bottom: 40px;
 }
+
+.table-bordered td a.btn {
+    margin-right: 5px; 
+}

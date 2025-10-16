@@ -20,6 +20,7 @@ namespace ToDoList.Controllers
                 .OrderBy(i=>i.DueAt)
                 .ToListAsync();
 
+            // Zadania na dziś
             ViewBag.SelectedDate = selectedDate;
 
             var nextDay = selectedDate.AddDays(1);
@@ -28,11 +29,30 @@ namespace ToDoList.Controllers
                 .OrderBy(i => i.DueAt)
                 .ToListAsync();
 
+            // Zadania w przyszłości
             ViewBag.FutureTasksCount = futureTasks.Count;
 
             var nextTask = futureTasks.FirstOrDefault();
+
+            // Najbliższe zadanie w przyszłości
             ViewBag.NextTaskName = nextTask?.Name ?? "-";
             ViewBag.NextTaskDue = nextTask?.DueAt.ToString("dd MMM yyyy") ?? "-";
+
+            var now = DateTime.Now;
+            var soonTasks = await _context.Items
+                .Where(i => !i.Finished && i.DueAt > now && i.DueAt <= now.AddHours(1))
+                .OrderBy(i => i.DueAt)
+                .ToListAsync();
+            // Zadania w ciągu godziny
+            ViewBag.SoonTasks = soonTasks;
+
+            var forgottenTasks = await _context.Items
+                .Where(i => !i.Finished && i.DueAt < now)
+                .OrderBy(i => i.DueAt)
+                .ToListAsync();
+
+            // Zadania po terminie
+            ViewBag.ForgottenTasks = forgottenTasks;
 
             return View(items);
         }

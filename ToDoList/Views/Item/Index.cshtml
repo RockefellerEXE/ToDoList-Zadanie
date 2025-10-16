@@ -4,11 +4,44 @@
 }
 
 <form method="get" asp-action="Index" class="mb-3 d-flex align-items-center gap-2" id="dateForm">
-    <label for="date">Wybierz dzień:</label>
-    <input type="date" id="date" name="date" class="form-control w-auto" value="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" />
-    <a asp-action="Index" class="btn btn-secondary">Dzisiaj</a>
+    @* <label for="date">Wybierz dzień:</label> *@
+    <a asp-action="Index" asp-route-date="@ViewBag.SelectedDate.AddDays(-1).ToString("yyyy-MM-dd")" class="btn btn-secondary">
+        &larr;
+    </a>
+    <input type="date" id="date" name="date" class="form-control w-auto" value="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" />    
+    <a asp-action="Index" asp-route-date="@ViewBag.SelectedDate.AddDays(1).ToString("yyyy-MM-dd")" class="btn btn-secondary">
+        &rarr;
+    </a>
+    @if (ViewBag.SelectedDate != DateTime.Today)
+    {
+        <a asp-action="Index" class="btn btn-primary">Dzisiaj</a>
+    }
     <a asp-action="Create" asp-route-date="@ViewBag.SelectedDate.ToString("yyyy-MM-dd HH:mm")" class="btn btn-success">Dodaj nową pozycję</a>
 </form>
+@if (((List<ToDoList.Models.Item>)ViewBag.ForgottenTasks).Any())
+{
+    <div class="alert alert-danger">
+        Masz @ViewBag.ForgottenTasks.Count zadania na które czas minął!
+        <ul>
+            @foreach (var t in (List<ToDoList.Models.Item>)ViewBag.ForgottenTasks)
+            {
+                <li>@t.Name - @t.DueAt.ToString("HH:mm dd MMM")</li>
+            }
+        </ul>
+    </div>
+}
+@if (((List<ToDoList.Models.Item>)ViewBag.SoonTasks).Any())
+{
+    <div class="alert alert-warning">
+        Masz @ViewBag.SoonTasks.Count zadania do wykonania w ciągu godziny!
+        <ul>
+            @foreach (var t in (List<ToDoList.Models.Item>)ViewBag.SoonTasks)
+            {
+                <li>@t.Name - @t.DueAt.ToString("HH:mm dd MMM")</li>
+            }
+        </ul>
+    </div>
+}
 @if (Model.Count > 0)
 {
     <table class="table-bordered table-striped">
@@ -19,7 +52,7 @@
                 <th>Opis</th>
                 <th>Czas do</th>
                 <th>Status</th>
-                <th>Akcje</th>
+                <th colspan="2">Akcje</th>
             </tr>
         </thead>
         <tbody>
@@ -47,6 +80,8 @@
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edytuj</a>
+                    </td>
+                    <td>
                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Usuń</a>
                     </td>
                 </tr>
@@ -72,11 +107,4 @@ else if (Model.Count > 0)
         Brak dalszych zadań
     </p>
 }
-
-<script>
-    // po zmianie daty automatycznie submituje formularz
-    document.getElementById('date').addEventListener('change', function() {
-        document.getElementById('dateForm').submit();
-    });
-</script>
 
