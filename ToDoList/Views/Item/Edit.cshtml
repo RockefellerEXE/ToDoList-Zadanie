@@ -11,7 +11,7 @@
 		<input type="text" class="form-control" asp-for="Name" />
 	</div>
 	<div class="form-group">
-		<label for="Description">Nazwa zadania</label>
+		<label for="Description">Opis zadania</label>
 		<input type="text" class="form-control" asp-for="Description" />
 	</div>
 	<div class="form-group">
@@ -23,5 +23,5 @@
 		<input type="checkbox" class="form-check-input" asp-for="Finished" />
 	</div>
 	<a asp-action="Index" asp-route-date="@Model.DueAt.ToString("yyyy-MM-dd")" class="btn btn-secondary">Powrót</a>
-	<button type="submit" class="btn btn-primary">Dodaj zadanie</button>
+	<button type="submit" class="btn btn-primary">Edytuj zadanie</button>
 </form>

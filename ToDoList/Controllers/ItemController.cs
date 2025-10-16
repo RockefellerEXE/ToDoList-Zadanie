@@ -15,14 +15,26 @@ namespace ToDoList.Controllers
         public async Task<IActionResult> Index( DateTime? date)
         {
             var selectedDate = date?.Date ?? DateTime.Today;
-            var item = await _context.Items
+            var items = await _context.Items
                 .Where(i=>i.DueAt.Date == selectedDate)
                 .OrderBy(i=>i.DueAt)
                 .ToListAsync();
 
             ViewBag.SelectedDate = selectedDate;
 
-            return View(item);
+            var tomorrow = DateTime.Today.AddDays(1);
+            var futureTasks = await _context.Items
+                .Where(i => i.DueAt.Date >= tomorrow)
+                .OrderBy(i => i.DueAt)
+                .ToListAsync();
+
+            ViewBag.FutureTasksCount = futureTasks.Count;
+
+            var nextTask = futureTasks.FirstOrDefault();
+            ViewBag.NextTaskName = nextTask?.Name ?? "-";
+            ViewBag.NextTaskDue = nextTask?.DueAt.ToString("dd MMM yyyy") ?? "-";
+
+            return View(items);
         }
         public IActionResult Create(DateTime? date) { 
             var item = new Item();
