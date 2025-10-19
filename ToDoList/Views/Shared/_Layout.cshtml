@@ -16,9 +16,12 @@
                 <!-- Marka po środku -->
                 <a class="navbar-brand mx-auto" asp-area="" asp-controller="Item" asp-action="Index">ToDoList</a>
 
-                <!-- Logout po prawej -->
+                <!-- Logout i hasło po prawej -->
                 @if (User.Identity.IsAuthenticated)
                 {
+                    <form asp-area="" asp-controller="Account" asp-action="ChangePassword" method="get" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Zmień hasło</button>
+                    </form>
                     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                         <button type="submit" class="btn btn-outline-danger btn-sm">Wyloguj</button>
                     </form>
