@@ -1,14 +1,19 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.DAL;
 using ToDoList.Models;
+using ToDoList.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTP"));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ItemsContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 builder.Services.AddDbContext<UsersContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 builder.Services.AddSession();
+builder.Services.AddTransient<EmailSender>();
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -17,7 +22,9 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 8;
     options.SignIn.RequireConfirmedAccount = false;
-}).AddEntityFrameworkStores<UsersContext>();
+}).AddEntityFrameworkStores<UsersContext>()
+.AddDefaultTokenProviders();
+
 builder.Services.AddAuthentication()
     .AddCookie(options =>
     {

@@ -1,21 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using PasswordGenerator;
 using ToDoList.Models;
+using ToDoList.Services;
 
 namespace ToDoList.Controllers
 {
     public class AccountController : Controller
     {
         private readonly UserManager<AppUser> _userMenager;
-        private readonly SignInManager<AppUser> _signInMenager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly EmailSender _emailSender;
 
-
-        public AccountController(UserManager<AppUser> userMenager, SignInManager<AppUser> signInMenager)
+        public AccountController(UserManager<AppUser> userMenager, SignInManager<AppUser> signInMenager, EmailSender emailSender)
         {
             _userMenager = userMenager;
-            _signInMenager = signInMenager;
+            _signInManager = signInMenager;
+            _emailSender = emailSender;
         }
         [AllowAnonymous]
         public IActionResult Register()
@@ -36,7 +38,7 @@ namespace ToDoList.Controllers
                 var result = await _userMenager.CreateAsync(user,password);
 
                 if (result.Succeeded) { 
-                    await _signInMenager.SignInAsync(user, isPersistent:false);
+                    await _signInManager.SignInAsync(user, isPersistent:false);
                     return RedirectToAction("Index", "Home");
                 }
                 foreach (var error in result.Errors)
@@ -59,7 +61,7 @@ namespace ToDoList.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInMenager.PasswordSignInAsync(email, password, rememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(email, password, rememberMe, false);
 
                 if (result.Succeeded)
                 {
@@ -78,7 +80,7 @@ namespace ToDoList.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _signInMenager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
         [Authorize]
@@ -114,7 +116,7 @@ namespace ToDoList.Controllers
             var result = await _userMenager.ChangePasswordAsync(user, currentPassword, newPassword);
             if (result.Succeeded)
             {
-                await _signInMenager.RefreshSignInAsync(user);
+                await _signInManager.RefreshSignInAsync(user);
                 ViewBag.Message = "Hasło zostało zmienione pomyślnie.";
                 return View();
             }
@@ -124,6 +126,46 @@ namespace ToDoList.Controllers
 
             return View();
         }
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var user = await _userMenager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var newPassword = new Password(true, true, true, true, 15).Next();
+            var token = await _userMenager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userMenager.ResetPasswordAsync(user, token, newPassword);
+
+            if (result.Succeeded)
+            {
+                SendPasswordEmail(user.Email, newPassword);
+                return RedirectToAction("Login");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+            return RedirectToAction("Login");
+        }
+
+        // Metoda pomocnicza wysyłki maila
+        private void SendPasswordEmail( string email, string newPassword)
+        {
+            string subject = "Nowe hasło do ToDoList";
+            string message = $"Twoje nowe hasło to: {newPassword}";
+
+            _emailSender.SendEmail(email, subject, message);
+        }
     }
 }
