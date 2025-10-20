@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ToDoList.Migrations
+namespace ToDoList.Migrations.Users
 {
     /// <inheritdoc />
-    public partial class user_init : Migration
+    public partial class userfinalmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

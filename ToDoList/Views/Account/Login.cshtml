@@ -15,12 +15,15 @@
             <input type="password" class="form-control" asp-for="Password" placeholder="Wpisz hasło" required />
         </div>
 
-        <div class="form-check form-switch">
-            <label class="form-check-label" for="rememberMe">Zapamiętaj mnie</label>
+        <div class="form-grop form-switch">
+            <label for="rememberMe">Zapamiętaj mnie</label>
             <input type="checkbox" role="switch" class="form-check-input" asp-for="RememberMe"  />
         </div>
 
-        <a asp-action="ForgotPassword">Nie pamiętam hasła</a>
+        <div>
+            <a asp-action="ForgotPassword" style="text-align:center;">Nie pamiętam hasła</a>
+        </div>
+
         <div class="form-buttons">
             <button type="submit" class="btn btn-primary">Zaloguj</button>
             <a asp-action="Register" class="btn btn-secondary">Zarejestruj się</a>
@@ -28,7 +31,7 @@
 
         @if (!ViewData.ModelState.IsValid)
         {
-            <div class="text-danger mt-2">
+            <div class="alert alert-danger mt-3">
                 @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                 {
                     <p>@error.ErrorMessage</p>

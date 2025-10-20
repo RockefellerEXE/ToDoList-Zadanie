@@ -8,7 +8,7 @@ using ToDoList.DAL;
 
 #nullable disable
 
-namespace ToDoList.Migrations
+namespace ToDoList.Migrations.Users
 {
     [DbContext(typeof(UsersContext))]
     partial class UsersContextModelSnapshot : ModelSnapshot

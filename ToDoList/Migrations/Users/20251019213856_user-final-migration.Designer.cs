@@ -9,11 +9,11 @@ using ToDoList.DAL;
 
 #nullable disable
 
-namespace ToDoList.Migrations
+namespace ToDoList.Migrations.Users
 {
     [DbContext(typeof(UsersContext))]
-    [Migration("20251019140802_user_init")]
-    partial class user_init
+    [Migration("20251019213856_user-final-migration")]
+    partial class userfinalmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

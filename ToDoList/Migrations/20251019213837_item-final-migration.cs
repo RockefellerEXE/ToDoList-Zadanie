@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ToDoList.Migrations.Items
+namespace ToDoList.Migrations
 {
     /// <inheritdoc />
-    public partial class item_init : Migration
+    public partial class itemfinalmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,7 +47,7 @@ namespace ToDoList.Migrations.Items
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Finished = table.Column<bool>(type: "bit", nullable: false),
                     DueAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
