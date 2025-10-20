@@ -63,8 +63,23 @@ Update-Database -Context UsersContext
 Update-Database -Context ItemsContext
 ```
 
-Uruchomienie komend utworzy bazę danych.
+Uruchomienie komend utworzy bazę danych. 
 
+Aby program działał poprawnie naeży również dodać konfigurację. Aby to zrobić kliknij PPM na projekt > Zarządzaj kluczami tajnymi użytkownika. 
+
+![config](/images/config.png)
+
+Utworzy to plik secrets.json który należy uzupełnić w poniższy sposób podając swoje dane (klient poczty musi mieć włączoną obsługę smtp)
+```json
+{
+  "SMTP": {
+    "HOST": "smtp.poczta.pl",
+    "PORT": 465,
+    "USERNAME": "todolist@poczta.pl",
+    "PASSWORD": "hasło"
+  }
+}
+```
 ---
 
 ### 4. Uruchomienie aplikacji
