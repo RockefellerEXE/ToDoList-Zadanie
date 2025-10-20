@@ -1,0 +1,110 @@
+﻿@model List<ToDoList.Models.Item>
+@{
+    ViewData["Title"] = "Strona główna";
+}
+
+<form method="get" asp-action="Index" class="mb-3 d-flex align-items-center gap-2" id="dateForm">
+    @* <label for="date">Wybierz dzień:</label> *@
+    <a asp-action="Index" asp-route-date="@ViewBag.SelectedDate.AddDays(-1).ToString("yyyy-MM-dd")" class="btn btn-secondary">
+        &larr;
+    </a>
+    <input type="date" id="date" name="date" class="form-control w-auto" value="@ViewBag.SelectedDate.ToString("yyyy-MM-dd")" />    
+    <a asp-action="Index" asp-route-date="@ViewBag.SelectedDate.AddDays(1).ToString("yyyy-MM-dd")" class="btn btn-secondary">
+        &rarr;
+    </a>
+    @if (ViewBag.SelectedDate != DateTime.Today)
+    {
+        <a asp-action="Index" class="btn btn-primary">Dzisiaj</a>
+    }
+    <a asp-action="Create" asp-route-date="@ViewBag.SelectedDate.ToString("yyyy-MM-dd HH:mm")" class="btn btn-success">Dodaj nową pozycję</a>
+</form>
+@if (((List<ToDoList.Models.Item>)ViewBag.ForgottenTasks).Any())
+{
+    <div class="alert alert-danger">
+        Masz @ViewBag.ForgottenTasks.Count zadania na które czas minął!
+        <ul>
+            @foreach (var t in (List<ToDoList.Models.Item>)ViewBag.ForgottenTasks)
+            {
+                <li>@t.Name - @t.DueAt.ToString("HH:mm dd MMM")</li>
+            }
+        </ul>
+    </div>
+}
+@if (((List<ToDoList.Models.Item>)ViewBag.SoonTasks).Any())
+{
+    <div class="alert alert-warning">
+        Masz @ViewBag.SoonTasks.Count zadania do wykonania w ciągu godziny!
+        <ul>
+            @foreach (var t in (List<ToDoList.Models.Item>)ViewBag.SoonTasks)
+            {
+                <li>@t.Name - @t.DueAt.ToString("HH:mm dd MMM")</li>
+            }
+        </ul>
+    </div>
+}
+@if (Model.Count > 0)
+{
+    <table class="table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Lp.</th>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Czas do</th>
+                <th>Status</th>
+                <th colspan="2">Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int counter = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@counter.</td>
+                    <td>@item.Name</td>
+                    <td>@(!string.IsNullOrWhiteSpace(item.Description) ? item.Description : "brak opisu")</td>
+                    <td>@item.DueAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        @if (item.Finished)
+                        {
+                            @* <span class="badge bg-success">Ukończone</span> *@
+                            <a asp-action="ChangeStatus" asp-route-id="@item.Id" class="btn btn-sm btn-success " title="Kliknij aby zmienić status">Ukończone</a>
+                        }
+                        else
+                        {
+                            @* <span class="badge bg-warning text-dark">W trakcie</span> *@
+                            <a asp-action="ChangeStatus" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Kliknij aby zmienić status">Rozpoczęte</a>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edytuj</a>
+                    </td>
+                    <td>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Usuń</a>
+                    </td>
+                </tr>
+                counter++;
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>Nie masz jeszcze żadnych zadań tego dnia. Dodaj nowe zadanie :) </h3>
+}
+@if (ViewBag.FutureTasksCount > 0)
+{
+    <p class="text-muted mt-3">
+        Zadań zaplanowanych w przyszłości: @ViewBag.FutureTasksCount<br />
+        Najbliższe zadanie: "@ViewBag.NextTaskName" z dnia: @ViewBag.NextTaskDue
+    </p>
+}
+else if (Model.Count > 0)
+{
+    <p class="text-muted mt-3">
+        Brak dalszych zadań
+    </p>
+}
+

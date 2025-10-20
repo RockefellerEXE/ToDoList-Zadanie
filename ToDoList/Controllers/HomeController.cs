@@ -15,7 +15,11 @@ namespace ToDoList.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return RedirectToAction("Index", "Item");
         }
 
         public IActionResult Privacy()
